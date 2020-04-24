@@ -5,26 +5,29 @@ export const Container = styled.div`
 
   span {
     width: 160px;
-    background: #ff9000;
+    /* background: #ff9000; */
+    background: #c53030;
     padding: 8px;
     border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
-    opacity: 0;
+    /* opacity: 0;
     transition: opacity 0.4s;
-    visibility: hidden;
+    visibility: hidden; */
 
     position: absolute;
     bottom: calc(100% + 12px);
     left: 56%;
     transform: translateX(-56%);
 
-    color: #321e38;
+    /* color: #321e38; */
+    color: #fff;
 
     &::before {
       content: '';
       border-style: solid;
-      border-color: #ff9000 transparent;
+      /* border-color: #ff9000 transparent; */
+      border-color: #c53030 transparent;
       border-width: 6px 6px 0 6px;
       bottom: 20px;
       top: 100%;
@@ -35,7 +38,7 @@ export const Container = styled.div`
   }
 
   &:hover {
-    opacity: 1;
-    visibility: hidden;
+    /* opacity: 1;
+    visibility: hidden; */
   }
 `;
