@@ -82,4 +82,7 @@ export const AnimatedContainer = styled.div`
       color: ${shade(0.2, '#ff9000')};
     }
   }
+  svg {
+    margin-right: 16px;
+  }
 `;

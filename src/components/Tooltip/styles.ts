@@ -17,8 +17,8 @@ export const Container = styled.div`
 
     position: absolute;
     bottom: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
+    left: 56%;
+    transform: translateX(-56%);
 
     /* color: #321e38; */
     color: #fff;

@@ -58,7 +58,7 @@ const SignUp: React.FC = () => {
 
           addToast({
             type: 'error',
-            title: 'Erro no cadastrp',
+            title: 'Erro no cadastro',
             description:
               'Ocorreu um erro ao fazer o cadastro, tente novamente ',
           });
@@ -67,7 +67,7 @@ const SignUp: React.FC = () => {
         }
         addToast({
           type: 'error',
-          title: 'Erro no cadastrp',
+          title: 'Erro no cadastro',
           description: 'Ocorreu um erro ao fazer o cadastro, tente novamente ',
         });
       }

@@ -13,7 +13,7 @@ export const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  place-content: center;
+  /* place-content: center; */
 
   width: 100%;
   max-width: 700px;
@@ -75,12 +75,16 @@ export const AnimatedContainer = styled.div`
     display: flex;
     align-items: center;
 
-    svg {
+    /* svg {
       margin-right: 16px;
-    }
+    } */
 
     &:hover {
       color: ${shade(0.2, '#ff9000')};
     }
+  }
+
+  svg {
+    margin-right: 16px;
   }
 `;
