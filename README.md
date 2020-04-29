@@ -30,3 +30,4 @@ Tools used in the application:
 - React icons;
 - unform
 - Yup (to validate field forms)
+- uuidv4 (to generate random id)
