@@ -90,11 +90,16 @@ export const AvatarInput = styled.div`
     right: 0;
     bottom: 0;
     border: none;
+    cursor: pointer;
     transition: background_color 0.2s;
 
     display: flex;
     align-items: center;
     justify-content: center;
+
+    input {
+      display: none;
+    }
 
     svg {
       width: 20px;

@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, ChangeEvent } from 'react';
 import { FiMail, FiLock, FiUser, FiCamera, FiArrowLeft } from 'react-icons/fi';
 import { useHistory, Link } from 'react-router-dom';
 import { Form } from '@unform/web';
@@ -10,10 +10,14 @@ import Input from '../../components/Input';
 import { useAuth } from '../../hooks/Auth';
 import getValidationsErrors from '../../utils/getValidationsErrors';
 import { useToast } from '../../hooks/Toast';
+import api from '../../services/api';
 
 interface ProfileFormData {
+  name: string;
   email: string;
+  old_password: string;
   password: string;
+  password_confirmation: string;
 }
 
 const Profile: React.FC = () => {
@@ -21,33 +25,66 @@ const Profile: React.FC = () => {
   const history = useHistory();
   const { signIn } = useAuth();
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const handleSubmit = useCallback(
     async (data: ProfileFormData) => {
       try {
         formRef.current?.setErrors({});
         const schema = Yup.object().shape({
+          name: Yup.string().required('Nome obrigatório'),
           email: Yup.string()
             .required('Email é obrigatório')
             .email('Digite email válido'),
-          password: Yup.string().required('A senha é obrigatória'),
+          old_password: Yup.string(),
+          password: Yup.string().when('old_password', {
+            is: (val) => !!val.length,
+            then: Yup.string().required('Campo Obrigatório'),
+            otherwise: Yup.string(),
+          }),
+          password_confirmation: Yup.string()
+            .when('old_password', {
+              is: (val) => !!val.length,
+              then: Yup.string().required('Campo Obrigatório'),
+              otherwise: Yup.string(),
+            })
+            .oneOf([Yup.ref('password'), null], 'A confirmação está incorreta'),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
-        await signIn({
-          email: data.email,
-          password: data.password,
-        });
 
-        history.push('/Dashboard');
+        const {
+          name,
+          email,
+          password,
+          old_password,
+          password_confirmation,
+        } = data;
+
+        const formData = {
+          name,
+          email,
+          ...(old_password
+            ? {
+                old_password,
+                password,
+                password_confirmation,
+              }
+            : {}),
+        };
+
+        const response = await api.put('/profile', formData);
+
+        updateUser(response.data);
+
+        history.push('/dashboard');
 
         addToast({
           type: 'success',
-          title: 'Login efetuado com sucesso',
-          description: `seja bem vindo ao sistema`,
+          title: 'Perfil Atualizado',
+          description: `Suas informações foram atualizadas com sucesso`,
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -58,13 +95,32 @@ const Profile: React.FC = () => {
         }
         addToast({
           type: 'error',
-          title: 'Erro na autenticação',
+          title: 'Erro na atualização',
           description:
-            'Ocorreu um erro ao fazer o login, cheque as credenciais ',
+            'Ocorreu um erro ao fazer o login, cheque as credenciais e tente novamente ',
         });
       }
     },
-    [signIn, addToast, history],
+    [addToast, history],
+  );
+
+  const handleAvatarChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        const data = new FormData();
+
+        data.append('avatar', e.target.files[0]);
+
+        api.patch('/users/avatar', data).then((response) => {
+          updateUser(response.data);
+          addToast({
+            type: 'success',
+            title: 'Avatar Atualizado',
+          });
+        });
+      }
+    },
+    [addToast],
   );
 
   return (
@@ -87,7 +143,7 @@ const Profile: React.FC = () => {
             <img src={user.avatar_url} alt={user.name} />
             <label htmlFor="avatar">
               <FiCamera />
-              <input type="text" id="avatar" />
+              <input type="file" id="avatar" onChange={handleAvatarChange} />
             </label>
           </AvatarInput>
           <h1>Meu Perfil</h1>
@@ -108,7 +164,7 @@ const Profile: React.FC = () => {
             icon={FiLock}
           />
           <Input
-            name="corfirm_password"
+            name="password_confirmation"
             type="password"
             placeholder="Confirmar senha"
             icon={FiLock}
